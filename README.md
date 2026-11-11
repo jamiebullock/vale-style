@@ -125,7 +125,7 @@ Example.Name = YES
 Comments.History = NO
 Plain.Contrast = error
 
-[third_party/**]
+[*third_party/*]
 BasedOnStyles =
 ```
 
