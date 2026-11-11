@@ -1,0 +1,15 @@
+extends: existence
+message: "'%s' describes the work, not the change."
+level: warning
+scope: body
+ignorecase: true
+tokens:
+  - as requested
+  - per (?:the )?review
+  - review(?:er)? (?:comment|feedback|asked|suggested|pointed)
+  - CodeRabbit
+  - was considered
+  - reverted?
+  - initially
+  - first attempt
+  - turned out

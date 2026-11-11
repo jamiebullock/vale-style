@@ -1,0 +1,7 @@
+extends: existence
+message: "A section heading is one of Changed, Added, Removed, Fixed."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^### (?!(?:Changed|Added|Removed|Fixed)\r?$).*$'

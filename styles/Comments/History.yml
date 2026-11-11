@@ -1,0 +1,15 @@
+extends: existence
+message: "'%s' describes what the code used to do. A comment describes the code as it is."
+level: warning
+scope: comment
+ignorecase: true
+tokens:
+  - used to be
+  - (?:it|this|that|which|we|function|code) used to
+  - previously
+  - formerly
+  - originally
+  - no longer(?! than)
+  - (?:was|were|has been|have been) (?:changed|removed|replaced|renamed|moved|added|fixed)
+  - as of version
+  - now (?:uses?|returns?|calls?|takes?|checks?|handles?)

@@ -1,0 +1,7 @@
+extends: existence
+message: "The subject opens with a type and a colon: feat, fix, chore, docs, refactor, test, perf or ci, with ! after it for a breaking change."
+level: error
+scope: subject
+nonword: true
+raw:
+  - '\A(?!(?:feat|fix|chore|docs|refactor|test|perf|ci)!?: \S)'

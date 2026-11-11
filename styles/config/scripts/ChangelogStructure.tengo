@@ -1,0 +1,184 @@
+/* Part of vale-style
+ *
+ * SPDX-FileCopyrightText: 2026 Jamie Bullock
+ * SPDX-License-Identifier: Zlib
+ */
+
+text := import("text")
+
+sections := ["Changed", "Added", "Removed", "Fixed"]
+number := "[0-9]+\\.[0-9]+\\.[0-9]+"
+breaking := "- **Breaking:** "
+
+matches := []
+
+fail := func(line, message) {
+    matches = append(matches, {begin: line.begin, end: line.end, message: message})
+}
+
+fields := func(version) {
+    out := []
+    for field in text.split(version, ".") {
+        out = append(out, text.atoi(field))
+    }
+    return out
+}
+
+older := func(a, b) {
+    x := fields(a)
+    y := fields(b)
+    for i := 0; i < 3; i++ {
+        if x[i] != y[i] {
+            return x[i] < y[i]
+        }
+    }
+    return false
+}
+
+position_of := func(name) {
+    for i, section in sections {
+        if section == name {
+            return i
+        }
+    }
+    return -1
+}
+
+releases := []
+links := {}
+release := undefined
+has_notice := false
+section := -1
+section_line := undefined
+section_count := 0
+entry_count := 0
+plain_entry_seen := false
+first_link := undefined
+links_closed := false
+first_line := undefined
+offset := 0
+
+close_section := func() {
+    if section_line != undefined && entry_count == 0 {
+        fail(section_line, "The section has no entry.")
+    }
+    section_line = undefined
+}
+
+close_release := func() {
+    close_section()
+    if release != undefined && section_count == 0 && !has_notice {
+        fail(release, "The release has neither a section nor a notice.")
+    }
+}
+
+for index, content in text.split(scope, "\n") {
+    line := {begin: offset, end: offset + len(content)}
+    offset += len(content) + 1
+    content = text.trim_suffix(content, "\r")
+
+    if first_link != undefined && !links_closed && content != "" && !text.has_prefix(content, "[") {
+        fail(line, "The links come after the last release, and this line is not a link.")
+        links_closed = true
+    }
+
+    if index == 0 {
+        first_line = line
+        if content != "# Changelog" {
+            fail(line, "The file opens with '# Changelog'.")
+        }
+    } else if text.has_prefix(content, "## ") {
+        close_release()
+        found := text.re_find("^## \\[(" + number + ")\\] - [0-9]{4}-[0-9]{2}-[0-9]{2}$", content)
+        if found != undefined {
+            version := found[0][1].text
+            if len(releases) > 0 && !older(version, releases[len(releases) - 1].version) {
+                fail(line, "Releases run from newest to oldest.")
+            }
+            releases = append(releases, {version: version, line: line})
+        }
+        release = line
+        has_notice = false
+        section = -1
+        section_count = 0
+    } else if text.has_prefix(content, "### ") {
+        close_section()
+        position := position_of(content[4:])
+        if release == undefined {
+            fail(line, "A section heading comes under a release heading.")
+        } else if position != -1 && position <= section {
+            fail(line, "Sections appear once each, in the order " + text.join(sections, ", ") + ".")
+        } else if position != -1 {
+            section = position
+        }
+        section_line = line
+        entry_count = 0
+        plain_entry_seen = false
+        section_count++
+    } else if text.has_prefix(content, "[") {
+        compare := text.re_find("^\\[(" + number + ")\\]: https://[^ ]+/compare/v(" + number + ")\\.\\.\\.v(" + number + ")$", content)
+        tag := text.re_find("^\\[(" + number + ")\\]: https://[^ ]+/releases/tag/v(" + number + ")$", content)
+        if compare != undefined && compare[0][1].text == compare[0][3].text {
+            links[compare[0][1].text] = {from: compare[0][2].text, line: line}
+        } else if tag != undefined && tag[0][1].text == tag[0][2].text {
+            links[tag[0][1].text] = {from: undefined, line: line}
+        } else {
+            fail(line, "A link has the form '[X.Y.Z]: https://.../compare/vA.B.C...vX.Y.Z' or '[X.Y.Z]: https://.../releases/tag/vX.Y.Z'.")
+        }
+        if first_link == undefined {
+            first_link = line
+        }
+    } else if content == "" {
+        continue
+    } else if release == undefined {
+        fail(line, "Nothing comes between the title and the first release.")
+    } else if text.has_prefix(content, "- ") {
+        if section_line == undefined {
+            fail(line, "An entry comes under a section heading.")
+        } else if !text.has_prefix(content, breaking) {
+            plain_entry_seen = true
+        } else if plain_entry_seen {
+            fail(line, "Breaking entries come first in their section.")
+        }
+        entry_count++
+    } else if text.re_match("^_[^_]+_$", content) {
+        if has_notice || section_count > 0 {
+            fail(line, "A release has one notice at most, directly under its heading.")
+        }
+        has_notice = true
+    } else {
+        fail(line, "A release holds a notice in italics, section headings and one-line entries starting '- ', and nothing else.")
+    }
+}
+close_release()
+
+if len(releases) == 0 && first_line != undefined {
+    fail(first_line, "The file has no release heading.")
+}
+
+for i, release in releases {
+    link := links[release.version]
+    if link == undefined {
+        fail(release.line, "Release " + release.version + " has no link at the foot of the file.")
+    } else if link.from == undefined {
+        continue
+    } else if i + 1 < len(releases) {
+        if link.from != releases[i + 1].version {
+            fail(link.line, "The link for " + release.version + " compares from v" + releases[i + 1].version + ", the release before it.")
+        }
+    } else if !older(link.from, release.version) {
+        fail(link.line, "The link for " + release.version + " compares from an earlier version.")
+    }
+}
+
+for version, link in links {
+    known := false
+    for release in releases {
+        if release.version == version {
+            known = true
+        }
+    }
+    if !known {
+        fail(link.line, "The link for " + version + " matches no release heading.")
+    }
+}

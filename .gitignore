@@ -1,0 +1,5 @@
+styles/ai-tells/
+styles/.vale-config/
+*.zip
+.DS_Store
+styles/config/templates/

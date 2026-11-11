@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test the rules
+    runs-on: ubuntu-latest
+    env:
+      VALE_VERSION: 3.26.0
+      VALE_SHA256: 22aa69a556558e4a9dfc63c17030777383d8d3c48dcdfad655fa98e839d666ed
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install Vale
+        run: |
+          archive="vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
+          curl --fail --silent --show-error --location --retry 3 \
+            --output "$RUNNER_TEMP/$archive" \
+            "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/$archive"
+          echo "$VALE_SHA256  $RUNNER_TEMP/$archive" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/vale"
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP/vale" vale
+          echo "$RUNNER_TEMP/vale" >> "$GITHUB_PATH"
+
+      - name: Fetch ai-tells
+        run: vale sync
+
+      - name: Test the rules
+        run: vale test --coverage styles/Plain styles/Changelog styles/Comments styles/Commit styles/PullRequest styles/Licence
+
+      - name: Check the package's own prose
+        run: vale README.md CHANGELOG.md DEPENDENCIES.md
+
+      - name: Check a project that takes the package from the archive
+        run: |
+          git archive --format=zip --prefix=vale-style/ --output "$RUNNER_TEMP/vale-style.zip" HEAD
+          mkdir "$RUNNER_TEMP/project"
+          cd "$RUNNER_TEMP/project"
+          printf 'StylesPath = .vale/styles\nMinAlertLevel = suggestion\nPackages = %s\n' "$RUNNER_TEMP/vale-style.zip" > .vale.ini
+          printf '# Title\n\nThis sentence is mispelt.\n' > README.md
+          vale sync
+          vale --output=line README.md > alerts.txt || true
+          cat alerts.txt
+          grep -q 'Plain.Spelling' alerts.txt

@@ -1,0 +1,29 @@
+- name: a line comment is reported
+  rule: LineComment.yml
+  format: c
+  view: C
+  input: |
+    int n; // count
+    /* count */
+  want: |
+    1:11:Comments.LineComment:Use a block comment, /* ... */.
+
+- name: an issue number in a comment is reported and one in a string is not
+  rule: IssueRef.yml
+  format: c
+  view: C
+  input: |
+    /* see #123 */
+    const char *s = "#123";
+  want: |
+    1:8:Comments.IssueRef:'#123' refers to an issue or pull request. That belongs in the commit, not in a comment.
+
+- name: change history is reported and a comparison of lengths is not
+  rule: History.yml
+  format: c
+  view: C
+  input: |
+    /* The result is no longer than the input, and is used to size the table. */
+    /* This no longer allocates. */
+  want: |
+    2:9:Comments.History:'no longer' describes what the code used to do. A comment describes the code as it is.

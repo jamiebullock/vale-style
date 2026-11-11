@@ -1,0 +1,7 @@
+extends: existence
+message: "An entry is one phrase, and this one has a second sentence."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)(?<=^- .*)\.\x20'

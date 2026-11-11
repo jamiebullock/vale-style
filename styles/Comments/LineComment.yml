@@ -1,0 +1,6 @@
+extends: existence
+message: "Use a block comment, /* ... */."
+level: error
+scope: linecomment
+raw:
+  - '\A'

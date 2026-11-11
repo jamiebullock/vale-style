@@ -1,0 +1,7 @@
+extends: existence
+message: "An entry does not end with a full stop."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)(?<=^- .*)\.(?=\r?$)'

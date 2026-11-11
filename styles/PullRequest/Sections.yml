@@ -1,0 +1,7 @@
+extends: existence
+message: "The body has Summary, Changes and Checklist sections."
+level: error
+scope: raw
+nonword: true
+raw:
+  - '(?m)\A(?:(?![\s\S]*^## Summary$)|(?![\s\S]*^## Changes$)|(?![\s\S]*^## Checklist$))'

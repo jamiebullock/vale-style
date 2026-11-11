@@ -1,0 +1,72 @@
+- name: a C file with the header passes
+  rule: Block.yml
+  format: c
+  input: |
+    /* Part of Example
+     *
+     * SPDX-FileCopyrightText: 2026 A. Author
+     * SPDX-License-Identifier: Zlib
+     */
+    #include <math.h>
+  want: ""
+
+- name: a C file with two copyright lines passes
+  rule: Block.yml
+  format: c
+  input: |
+    /* Part of Example
+     *
+     * SPDX-FileCopyrightText: 2019 A. Author
+     * SPDX-FileCopyrightText: 2026 B. Author
+     * SPDX-License-Identifier: MIT
+     */
+  want: ""
+
+- name: a C file without the header is reported
+  rule: Block.yml
+  format: c
+  input: |
+    #include <math.h>
+  want: |
+    1:1:Licence.Block:The file opens with the SPDX header: 'Part of <project>', the copyright and the licence identifier.
+
+- name: a C header with a licence paragraph is reported
+  rule: Block.yml
+  format: c
+  input: |
+    /* Part of Example
+     *
+     * SPDX-FileCopyrightText: 2026 A. Author
+     * SPDX-License-Identifier: Zlib
+     *
+     * This software is provided 'as-is'.
+     */
+  contains: "Licence.Block"
+
+- name: a script with the header passes
+  rule: Hash.yml
+  input: |
+    # Part of Example
+    #
+    # SPDX-FileCopyrightText: 2026 A. Author
+    # SPDX-License-Identifier: Zlib
+
+    cmake_minimum_required(VERSION 3.21)
+  want: ""
+
+- name: a script with an interpreter line and the header passes
+  rule: Hash.yml
+  input: |
+    #!/usr/bin/env python3
+    # Part of Example
+    #
+    # SPDX-FileCopyrightText: 2026 A. Author
+    # SPDX-License-Identifier: Zlib
+  want: ""
+
+- name: a script without the header is reported
+  rule: Hash.yml
+  input: |
+    cmake_minimum_required(VERSION 3.21)
+  want: |
+    1:1:Licence.Hash:The file opens with the SPDX header: 'Part of <project>', the copyright and the licence identifier.

@@ -1,0 +1,7 @@
+extends: existence
+message: "Changes and Checklist are bullet lists."
+level: error
+scope: raw
+nonword: true
+raw:
+  - '(?m)(?<=^## (?:Changes|Checklist)\n(?:(?!## ).*\n)*)^(?!\s*[-*] |\s*$|## |<!--).+'

@@ -1,0 +1,7 @@
+extends: existence
+message: "A release heading has the form '## [X.Y.Z] - YYYY-MM-DD'."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^## (?!\[\d+\.\d+\.\d+\] - \d{4}-\d{2}-\d{2}\r?$).*$'

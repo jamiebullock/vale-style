@@ -1,0 +1,86 @@
+- name: a conventional subject passes the type rule
+  rule: Type.yml
+  format: md
+  view: Commit
+  input: |
+    fix: clamp the search loop to N
+
+    The loop read one bin past the end when the threshold was 1.
+  want: ""
+
+- name: a breaking change marker and the other types pass the type rule
+  rule: Type.yml
+  format: md
+  view: Commit
+  input: |
+    feat!: take the length as the second argument
+  want: ""
+
+- name: a scope and an unlisted type
+  rule: Type.yml
+  format: md
+  view: Commit
+  input: |
+    style(core): reflow the search loop
+  want: |
+    1:1:Commit.Type:The subject opens with a type and a colon: feat, fix, chore, docs, refactor, test, perf or ci, with ! after it for a breaking change.
+
+- name: a subject with no type
+  rule: Type.yml
+  format: md
+  view: Commit
+  input: |
+    Clamp the search loop to N
+  want: |
+    1:1:Commit.Type:The subject opens with a type and a colon: feat, fix, chore, docs, refactor, test, perf or ci, with ! after it for a breaking change.
+
+- name: a type in the body does not satisfy the rule
+  rule: Type.yml
+  format: md
+  view: Commit
+  input: |
+    Clamp the search loop to N
+
+    fix: this is the body
+  want: |
+    1:1:Commit.Type:The subject opens with a type and a colon: feat, fix, chore, docs, refactor, test, perf or ci, with ! after it for a breaking change.
+
+- name: a subject of 73 characters
+  rule: SubjectLength.yml
+  format: md
+  view: Commit
+  input: |
+    fix: clamp the search loop to N and the centroid loops to the same bounds
+  want: |
+    1:1:Commit.SubjectLength:The subject is longer than 72 characters.
+
+- name: a long body line is no subject
+  rule: SubjectLength.yml
+  format: md
+  view: Commit
+  input: |
+    fix: clamp the search loop to N
+
+    The loop read one bin past the end of the spectrum when the threshold was exactly 1.
+  want: ""
+
+- name: a subject with a full stop
+  rule: SubjectFullStop.yml
+  format: md
+  view: Commit
+  input: |
+    fix: clamp the search loop to N.
+
+    The loop read one bin past the end.
+  want: |
+    1:32:Commit.SubjectFullStop:The subject does not end with a full stop.
+
+- name: a body that narrates the work
+  rule: Narration.yml
+  format: md
+  view: Commit
+  input: |
+    fix: clamp the search loop to N
+
+    As requested, the first attempt was reverted.
+  contains: "Commit.Narration"

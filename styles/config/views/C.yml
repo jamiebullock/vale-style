@@ -1,0 +1,8 @@
+engine: tree-sitter
+scopes:
+  - name: linecomment
+    expr: ((comment) @c (#match? @c "^//"))
+  - name: doxygen
+    expr: ((comment) @c (#match? @c "^/\\*\\*"))
+  - name: blockcomment
+    expr: ((comment) @c (#match? @c "^/\\*[^*]"))

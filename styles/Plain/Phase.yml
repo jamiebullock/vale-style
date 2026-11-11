@@ -1,0 +1,7 @@
+extends: existence
+message: "'%s' refers to a stage of a plan. Published text stands on its own."
+level: error
+ignorecase: true
+nonword: true
+tokens:
+  - \bphase \d+\b

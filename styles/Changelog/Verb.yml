@@ -1,0 +1,5 @@
+extends: script
+message: "An entry opens with a listed verb in the imperative."
+level: error
+scope: raw
+script: ChangelogVerb.tengo

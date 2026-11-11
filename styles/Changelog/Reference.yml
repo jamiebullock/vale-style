@@ -1,0 +1,7 @@
+extends: existence
+message: "An entry ends with a linked pull request, issue or commit in parentheses, as in ([#12](https://github.com/owner/name/pull/12))."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^- (?!.* \((?:\[#(\d+)\]\(https://[^\s()]+/(?:pull|issues)/\1\)|\[`[0-9a-f]{7,40}`\]\(https://[^\s()]+/commit/[0-9a-f]{7,40}\))(?:, (?:\[#(\d+)\]\(https://[^\s()]+/(?:pull|issues)/\2\)|\[`[0-9a-f]{7,40}`\]\(https://[^\s()]+/commit/[0-9a-f]{7,40}\)))*\)\r?$).*$'

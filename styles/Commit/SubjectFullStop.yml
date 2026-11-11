@@ -1,0 +1,7 @@
+extends: existence
+message: "The subject does not end with a full stop."
+level: error
+scope: subject
+nonword: true
+raw:
+  - '\.\s*\z'

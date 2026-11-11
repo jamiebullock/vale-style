@@ -1,0 +1,10 @@
+extends: existence
+message: "'%s' defines the text against an alternative. State the fact."
+level: warning
+ignorecase: true
+nonword: true
+tokens:
+  - \brather than\b
+  - \binstead of\b
+  - \bas opposed to\b
+  - (?<!\bor )\bnot the\b

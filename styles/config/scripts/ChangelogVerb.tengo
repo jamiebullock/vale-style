@@ -1,0 +1,62 @@
+/* Part of vale-style
+ *
+ * SPDX-FileCopyrightText: 2026 Jamie Bullock
+ * SPDX-License-Identifier: Zlib
+ */
+
+text := import("text")
+
+verbs := [
+    "Accept", "Add", "Allow", "Assert", "Build", "Bump", "Change", "Check",
+    "Correct", "Deprecate", "Document", "Drop", "Exclude", "Fix", "Implement",
+    "Include", "Keep", "Limit", "Make", "Match", "Move", "Raise", "Read",
+    "Reduce", "Reject", "Remove", "Rename", "Replace", "Report", "Require",
+    "Restrict", "Return", "Set", "Speed", "Stop", "Support", "Tag", "Take",
+    "Treat", "Use"
+]
+entry := "- "
+breaking := "**Breaking:** "
+
+unlisted := "An entry opens with one of " + text.join(verbs, ", ") + "."
+
+matches := []
+offset := 0
+
+listed := func(word) {
+    for verb in verbs {
+        if text.to_lower(verb) == text.to_lower(word) {
+            return verb
+        }
+    }
+    return undefined
+}
+
+for content in text.split(scope, "\n") {
+    begin := offset
+    offset += len(content) + 1
+    content = text.trim_suffix(content, "\r")
+    if !text.has_prefix(content, entry) {
+        continue
+    }
+
+    rest := content[len(entry):]
+    begin += len(entry)
+    is_breaking := text.has_prefix(rest, breaking)
+    if is_breaking {
+        rest = rest[len(breaking):]
+        begin += len(breaking)
+    }
+
+    found := text.re_find("^[A-Za-z]+", rest)
+    word := found == undefined ? "" : found[0][0].text
+    end := begin + (word == "" ? len(rest) : len(word))
+    verb := listed(word)
+
+    if verb == undefined {
+        matches = append(matches, {begin: begin, end: end, message: unlisted})
+    } else if is_breaking && word != text.to_lower(verb) {
+        matches = append(matches, {begin: begin, end: end, message: "The verb after '**Breaking:**' is in lower case."})
+    } else if !is_breaking && word != verb {
+        matches = append(matches, {begin: begin, end: end, message: "An entry opens with a capital letter."})
+    }
+}

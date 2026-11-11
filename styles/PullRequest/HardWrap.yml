@@ -1,0 +1,7 @@
+extends: existence
+message: "The paragraph is hard-wrapped. GitHub renders each newline as a line break."
+level: error
+scope: raw
+nonword: true
+raw:
+  - '(?m)^(?![#|>`]|\s*$)[^\n]{60,}[^\n.:!?`)|]\n(?=[a-z(`])'

@@ -1,0 +1,7 @@
+extends: existence
+message: "The entry has more than 20 words before its reference."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^- (?>(?:\*\*Breaking:\*\* )?)(?:(?!\(\[)\S+ +){20}(?!\(\[)\S.*$'

@@ -1,0 +1,9 @@
+extends: spelling
+message: "'%s' is not in the dictionary."
+level: error
+dictionaries:
+  - en_GB
+filters:
+  - '\w*_\w*'
+  - '\w*\d\w*'
+  - '[A-Z]{2,}s?'

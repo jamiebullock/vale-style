@@ -1,0 +1,58 @@
+- name: a body in the house form passes
+  input: |
+    ## Summary
+
+    This PR clamps the search loop to N. The loop read one bin past the end when the threshold was 1.
+
+    ## Changes
+
+    - Clamp the loop in `ex_search`
+    - Add a test at threshold 1
+
+    ## Checklist
+
+    - [x] Build and tests pass locally
+
+    ## Related Issues
+
+    Closes #42
+  want: ""
+
+- name: a summary that does not open with This PR
+  rule: Opening.yml
+  input: |
+    ## Summary
+
+    Clamps the search loop.
+  contains: "PullRequest.Opening"
+
+- name: a body without the sections
+  rule: Sections.yml
+  input: |
+    Clamps the search loop.
+  contains: "PullRequest.Sections"
+
+- name: a hard-wrapped paragraph
+  rule: HardWrap.yml
+  input: |
+    ## Summary
+
+    This PR clamps the search loop to N. The loop read one bin past the
+    end when the threshold was 1.
+  contains: "PullRequest.HardWrap"
+
+- name: a paragraph under Changes
+  rule: ChangesAreBullets.yml
+  input: |
+    ## Changes
+
+    The loop is clamped.
+  contains: "PullRequest.ChangesAreBullets"
+
+- name: a reference that does not close the issue
+  rule: Closing.yml
+  input: |
+    ## Related Issues
+
+    Addresses #42
+  contains: "PullRequest.Closing"

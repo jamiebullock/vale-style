@@ -1,0 +1,391 @@
+- name: a well-formed file passes every rule
+  input: |
+    # Changelog
+
+    ## [1.1.0] - 2026-02-01
+
+    ### Changed
+
+    - **Breaking:** rename `ex_mean` to `ex_average` ([#14](https://example.com/o/n/pull/14))
+    - Raise the minimum CMake version to 3.21 ([#13](https://example.com/o/n/pull/13), [#15](https://example.com/o/n/issues/15))
+
+    ### Added
+
+    - Add `ex_median` ([`53bd922`](https://example.com/o/n/commit/53bd922))
+
+    ### Fixed
+
+    - Fix the phase sign of `ex_spectrum` on Linux ([#12](https://example.com/o/n/pull/12))
+
+    ## [1.0.0] - 2026-01-01
+
+    _First release._
+
+    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: ""
+
+- name: a well-formed file with CRLF line endings passes every rule
+  input: |
+    # Changelog
+    
+    ## [1.1.0] - 2026-02-01
+    
+    ### Changed
+    
+    - **Breaking:** rename `ex_mean` to `ex_average` ([#14](https://example.com/o/n/pull/14))
+    - Raise the minimum CMake version to 3.21 ([#13](https://example.com/o/n/pull/13), [#15](https://example.com/o/n/issues/15))
+    
+    ### Added
+    
+    - Add `ex_median` ([`53bd922`](https://example.com/o/n/commit/53bd922))
+    
+    ### Fixed
+    
+    - Fix the phase sign of `ex_spectrum` on Linux ([#12](https://example.com/o/n/pull/12))
+    
+    ## [1.0.0] - 2026-01-01
+    
+    _First release._
+    
+    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: ""
+
+- name: another title and text before the first release
+  rule: Structure.yml
+  input: |
+    # History
+
+    All notable changes are listed here.
+
+    ## [1.1.0] - 2026-02-01
+
+    ### Changed
+
+    - **Breaking:** rename `ex_mean` to `ex_average` ([#14](https://example.com/o/n/pull/14))
+    - Raise the minimum CMake version to 3.21 ([#13](https://example.com/o/n/pull/13), [#15](https://example.com/o/n/issues/15))
+
+    ### Added
+
+    - Add `ex_median` ([`53bd922`](https://example.com/o/n/commit/53bd922))
+
+    ### Fixed
+
+    - Fix the phase sign of `ex_spectrum` on Linux ([#12](https://example.com/o/n/pull/12))
+
+    ## [1.0.0] - 2026-01-01
+
+    _First release._
+
+    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    1:1:Changelog.Structure:The file opens with '# Changelog'.
+    3:1:Changelog.Structure:Nothing comes between the title and the first release.
+
+- name: a file with no release
+  rule: Structure.yml
+  input: |
+    # Changelog
+  want: |
+    1:1:Changelog.Structure:The file has no release heading.
+
+- name: releases and sections out of order, an empty section, a wrapped entry and an entry outside a section
+  rule: Structure.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    - Add an entry outside a section
+
+    ### Added
+
+    - Add a change that is wrapped
+      onto a second line
+
+    ### Changed
+
+    - Change X
+
+    ### Fixed
+
+    ## [1.1.0] - 2026-02-01
+
+    _Second release._
+
+    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0
+    [1.0.0]: https://example.com/o/n/compare/v0.9.0...v1.0.0
+  want: |
+    5:1:Changelog.Structure:An entry comes under a section heading.
+    10:1:Changelog.Structure:A release holds a notice in italics, section headings and one-line entries starting '- ', and nothing else.
+    12:1:Changelog.Structure:Sections appear once each, in the order Changed, Added, Removed, Fixed.
+    16:1:Changelog.Structure:The section has no entry.
+    18:1:Changelog.Structure:Releases run from newest to oldest.
+    23:1:Changelog.Structure:The link for 1.0.0 compares from v1.1.0, the release before it.
+
+- name: a breaking entry after a plain one, a second notice and an empty release
+  rule: Structure.yml
+  input: |
+    # Changelog
+
+    ## [1.1.0] - 2026-02-01
+
+    _A notice._
+
+    ### Changed
+
+    - Raise the minimum CMake version
+    - **Breaking:** rename `ex_mean`
+
+    _A second notice._
+
+    ## [1.0.0] - 2026-01-01
+
+    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    10:1:Changelog.Structure:Breaking entries come first in their section.
+    12:1:Changelog.Structure:A release has one notice at most, directly under its heading.
+    14:1:Changelog.Structure:The release has neither a section nor a notice.
+
+- name: links that do not match the releases
+  rule: Structure.yml
+  input: |
+    # Changelog
+
+    ## [1.2.0] - 2026-03-01
+
+    ### Added
+
+    - Add A
+
+    ## [1.1.0] - 2026-02-01
+
+    ### Added
+
+    - Add B
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add C
+
+    [1.2.0]: https://example.com/o/n/compare/v1.0.0...v1.2.0
+    [1.0.0]: https://example.com/o/n/compare/v1.0.0...v1.0.0
+    [0.9.0]: https://example.com/o/n/compare/v0.8.0...v0.9.0
+    [0.8.0]: http://example.com/o/n/compare/v0.7.0...v0.8.0
+    [0.7.0]: https://example.com/o/n/releases/tag/v0.6.0
+    - Add D
+  want: |
+    9:1:Changelog.Structure:Release 1.1.0 has no link at the foot of the file.
+    21:1:Changelog.Structure:The link for 1.2.0 compares from v1.1.0, the release before it.
+    22:1:Changelog.Structure:The link for 1.0.0 compares from an earlier version.
+    23:1:Changelog.Structure:The link for 0.9.0 matches no release heading.
+    24:1:Changelog.Structure:A link has the form '[X.Y.Z]: https://.../compare/vA.B.C...vX.Y.Z' or '[X.Y.Z]: https://.../releases/tag/vX.Y.Z'.
+    25:1:Changelog.Structure:A link has the form '[X.Y.Z]: https://.../compare/vA.B.C...vX.Y.Z' or '[X.Y.Z]: https://.../releases/tag/vX.Y.Z'.
+    26:1:Changelog.Structure:The links come after the last release, and this line is not a link.
+
+- name: a release heading without brackets and a dash
+  rule: ReleaseHeading.yml
+  input: |
+    # Changelog
+
+    ## 1.0.0 (2026-01-01)
+  want: |
+    3:1:Changelog.ReleaseHeading:A release heading has the form '## [X.Y.Z] - YYYY-MM-DD'.
+
+- name: the four section names pass
+  rule: SectionName.yml
+  input: |
+    ### Changed
+
+    ### Added
+
+    ### Removed
+
+    ### Fixed
+  want: ""
+
+- name: another section name
+  rule: SectionName.yml
+  input: |
+    ### Deprecated
+
+    ### Added things
+  want: |
+    1:1:Changelog.SectionName:A section heading is one of Changed, Added, Removed, Fixed.
+    3:1:Changelog.SectionName:A section heading is one of Changed, Added, Removed, Fixed.
+
+- name: an entry of 20 words and a reference passes
+  rule: EntryLength.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add word word word word word word word word word word word word word word word word word word word ([#1](https://example.com/o/n/pull/1), [#2](https://example.com/o/n/pull/2))
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: ""
+
+- name: a breaking entry of 20 words passes
+  rule: EntryLength.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - **Breaking:** add word word word word word word word word word word word word word word word word word word word ([#1](https://example.com/o/n/pull/1))
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: ""
+
+- name: an entry of 21 words
+  rule: EntryLength.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add word word word word word word word word word word word word word word word word word word word more ([#1](https://example.com/o/n/pull/1))
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    7:1:Changelog.EntryLength:The entry has more than 20 words before its reference.
+
+- name: an entry with a closing full stop
+  rule: FullStop.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add a new function.
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    7:21:Changelog.FullStop:An entry does not end with a full stop.
+
+- name: a full stop inside a name passes
+  rule: OnePhrase.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Change the soname to `libexample.so.1.3` ([#1](https://example.com/o/n/pull/1))
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: ""
+
+- name: an entry with a second sentence
+  rule: OnePhrase.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add a new function. It returns the median ([#1](https://example.com/o/n/pull/1))
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    7:21:Changelog.OnePhrase:An entry is one phrase, and this one has a second sentence.
+
+- name: listed verbs in the wrong case
+  rule: Verb.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add `ex_median`
+    - **Breaking:** remove `ex_mean`
+    - add `ex_median`
+    - **Breaking:** Remove `ex_mean`
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    9:3:Changelog.Verb:An entry opens with a capital letter.
+    10:17:Changelog.Verb:The verb after '**Breaking:**' is in lower case.
+
+- name: an entry that opens with a name
+  rule: Verb.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - `ex_median` is new
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  contains: "7:3:Changelog.Verb:An entry opens with one of Accept, Add, "
+
+- name: an entry that opens with an unlisted verb
+  rule: Verb.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Introduce `ex_median`
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  contains: "7:3:Changelog.Verb:An entry opens with one of Accept, Add, "
+
+- name: an entry that opens with a verb in the past tense
+  rule: Verb.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - **Breaking:** removed `ex_mean`
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  contains: "7:17:Changelog.Verb:An entry opens with one of Accept, Add, "
+
+- name: entries without a linked reference at the end
+  rule: Reference.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Add A ([#1](https://example.com/o/n/pull/1))
+    - Add B ([`53bd922`](https://example.com/o/n/commit/53bd922), [#2](https://example.com/o/n/issues/2))
+    - Add C
+    - Add D (#4)
+    - Add E ([#5](https://example.com/o/n/pull/6))
+    - Add F ([#7](https://example.com/o/n/pull/7)) and more
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    9:1:Changelog.Reference:An entry ends with a linked pull request, issue or commit in parentheses, as in ([#12](https://github.com/owner/name/pull/12)).
+    10:1:Changelog.Reference:An entry ends with a linked pull request, issue or commit in parentheses, as in ([#12](https://github.com/owner/name/pull/12)).
+    11:1:Changelog.Reference:An entry ends with a linked pull request, issue or commit in parentheses, as in ([#12](https://github.com/owner/name/pull/12)).
+    12:1:Changelog.Reference:An entry ends with a linked pull request, issue or commit in parentheses, as in ([#12](https://github.com/owner/name/pull/12)).

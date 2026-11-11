@@ -1,0 +1,8 @@
+extends: existence
+message: "'%s' refers to an issue or pull request. That belongs in the commit, not in a comment."
+level: error
+scope: comment
+nonword: true
+tokens:
+  - '(?<![&\w])#\d+\b'
+  - '\b(?:issue|PR|pull request|GH-?)\s*#?\d+\b'

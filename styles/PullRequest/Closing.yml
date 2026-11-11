@@ -1,0 +1,7 @@
+extends: existence
+message: "'%s' does not close the issue on merge. Use Closes, Fixes or Resolves when the PR resolves it."
+level: suggestion
+scope: raw
+nonword: true
+raw:
+  - '(?i)\b(?:addresses|see|related to|refs?|part of) #\d+'

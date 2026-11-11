@@ -1,0 +1,12 @@
+extends: existence
+message: "'%s' refers to planning material. Published text stands on its own."
+level: error
+ignorecase: true
+nonword: true
+tokens:
+  - \bthe plan\b
+  - \b(?:the )?roadmap\b
+  - \bmilestone \d
+  - \bPR \d+ of\b
+  - \bnotes/[\w./-]*
+  - \b[A-Z_]+PLAN\.md\b

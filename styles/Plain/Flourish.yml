@@ -1,0 +1,23 @@
+extends: existence
+message: "'%s' is a metaphor or filler. Say what happens."
+level: error
+ignorecase: true
+tokens:
+  - sharp edges?
+  - in flight
+  - kick(?:ed|s|ing)? off
+  - fir(?:ed|es|ing) off
+  - lands?
+  - landed
+  - ships?
+  - shipped
+  - warts?
+  - gnarly
+  - hairy
+  - nasty
+  - ugly
+  - messy
+  - rabbit holes?
+  - imo
+  - tbh
+  - under the hood

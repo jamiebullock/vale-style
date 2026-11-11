@@ -1,0 +1,66 @@
+- name: a contrast with an alternative is reported
+  rule: Contrast.yml
+  input: |
+    The table is built once rather than per call.
+  want: |
+    1:25:Plain.Contrast:'rather than' defines the text against an alternative. State the fact.
+
+- name: whether or not is no contrast
+  rule: Contrast.yml
+  input: |
+    The flag decides whether or not the DC bin is kept.
+  want: ""
+
+- name: a banned word is reported
+  rule: Flourish.yml
+  input: |
+    The fix lands in the next release.
+  contains: "Plain.Flourish"
+
+- name: a dash that is not ASCII is reported
+  rule: Ascii.yml
+  input: "A dash — here.\n"
+  contains: "Plain.Ascii"
+
+- name: a planning reference is reported
+  rule: Planning.yml
+  input: |
+    This is the second change in the plan.
+  contains: "Plain.Planning"
+
+- name: tool attribution is reported
+  rule: Attribution.yml
+  input: |
+    Co-Authored-By: Claude <noreply@anthropic.com>
+  contains: "Plain.Attribution"
+
+- name: a claim about use in the field is reported
+  rule: FieldClaim.yml
+  input: |
+    The overflow has never been reported.
+  contains: "Plain.FieldClaim"
+
+- name: a statement qualified with candour is reported
+  rule: Candour.yml
+  input: |
+    Honestly, the loop is slow.
+  contains: "Plain.Candour"
+
+- name: a doubled word is reported
+  rule: Repetition.yml
+  input: |
+    The second half holds the the frequencies.
+  contains: "Plain.Repetition"
+
+- name: a numbered phase is reported
+  rule: Phase.yml
+  input: |
+    This is phase 2 of the work.
+  contains: "Plain.Phase"
+
+- name: British spelling, identifiers and abbreviations pass and a misspelt word is reported
+  rule: Spelling.yml
+  input: |
+    The colour of ex_mean on x86 follows the behaviour of two FFTs, and one word is mispelt.
+  want: |
+    1:81:Plain.Spelling:'mispelt' is not in the dictionary.

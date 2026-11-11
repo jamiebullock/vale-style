@@ -1,0 +1,6 @@
+extends: existence
+message: "The file opens with the SPDX header: 'Part of <project>', the copyright and the licence identifier."
+level: error
+scope: raw
+raw:
+  - '\A(?!(?:#![^\n]*\n)?# Part of \S[^\n]*\n#\n(?:# SPDX-FileCopyrightText: \d{4} \S[^\n]*\n)+# SPDX-License-Identifier: [\w.+-]+\n)'

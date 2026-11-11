@@ -1,0 +1,10 @@
+extends: existence
+message: "'%s' is tool attribution."
+level: error
+ignorecase: true
+nonword: true
+tokens:
+  - Co-Authored-By:\s*Claude
+  - Generated with \[?Claude Code
+  - claude\.ai/code/session
+  - noreply@anthropic\.com

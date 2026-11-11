@@ -1,0 +1,7 @@
+extends: existence
+message: "The Summary opens with 'This PR <verb>...'."
+level: error
+scope: raw
+nonword: true
+raw:
+  - '(?m)^## Summary\n(?>\s*)(?!This PR [a-z]+\b)'

@@ -1,0 +1,10 @@
+extends: existence
+message: "'%s' qualifies a statement with candour. Make the statement."
+level: error
+ignorecase: true
+tokens:
+  - honest(?:ly)?
+  - frankly
+  - to be (?:fair|clear|frank)
+  - candid(?:ly)?
+  - admittedly

@@ -1,0 +1,7 @@
+extends: existence
+message: "'%s' is not ASCII."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '[^\x00-\x7F]'

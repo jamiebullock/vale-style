@@ -1,0 +1,5 @@
+extends: script
+message: "The changelog breaks a structural rule."
+level: error
+scope: raw
+script: ChangelogStructure.tengo

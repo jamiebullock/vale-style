@@ -1,0 +1,7 @@
+extends: existence
+message: "The subject is longer than 72 characters."
+level: warning
+scope: subject
+nonword: true
+raw:
+  - '\A.{73,}'
