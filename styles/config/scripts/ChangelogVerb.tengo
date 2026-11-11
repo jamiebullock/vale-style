@@ -17,11 +17,6 @@ verbs := [
 entry := "- "
 breaking := "**Breaking:** "
 
-unlisted := "An entry opens with one of " + text.join(verbs, ", ") + "."
-
-matches := []
-offset := 0
-
 listed := func(word) {
     for verb in verbs {
         if text.to_lower(verb) == text.to_lower(word) {
@@ -30,6 +25,25 @@ listed := func(word) {
     }
     return undefined
 }
+
+preamble := scope
+first_release := text.index(scope, "\n## ")
+if first_release != -1 {
+    preamble = scope[:first_release]
+}
+declared := text.re_find("(?m)^<!-- verbs: ([A-Z][a-z]+(?:, [A-Z][a-z]+)*) -->\r?$", preamble)
+if declared != undefined {
+    for verb in text.split(declared[0][1].text, ", ") {
+        if listed(verb) == undefined {
+            verbs = append(verbs, verb)
+        }
+    }
+}
+
+unlisted := "An entry opens with one of " + text.join(verbs, ", ") + "."
+
+matches := []
+offset := 0
 
 for content in text.split(scope, "\n") {
     begin := offset
