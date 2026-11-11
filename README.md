@@ -42,11 +42,12 @@ Keep the synced files out of version control:
 | `CHANGELOG.md` | Plain, Changelog |
 | `*.c`, `*.h`, `*.i` | Plain, Comments, Licence |
 | `*.cc`, `*.cpp`, `*.cxx`, `*.hh`, `*.hpp`, `*.hxx` | Plain, Comments without `LineComment`, Licence |
+| `*.tengo` | Plain, Comments without `LineComment`, Licence |
 | `CMakeLists.txt`, `*.cmake`, `Makefile`, `*.mk`, `*.py` | Licence |
 | `COMMIT_EDITMSG` | Plain, Commit, ai-tells |
 | `PR_BODY.md` | Plain, PullRequest |
 
-In C and C++ files the Plain and Comments rules read the comments only.
+In C and C++ files and in `*.tengo` scripts the Plain and Comments rules read the comments only.
 
 | Style | Rules |
 | --- | --- |
@@ -148,15 +149,13 @@ vale PR_BODY.md
 
 ## Development
 
-Each style has a test file beside its rules. `vale sync` fetches ai-tells, and then the tests run:
+Each style has a test file beside its rules. `make check` runs the tests, checks the repository's own files against the rules and checks a project that takes the package from the archive:
 
 ```sh
-vale sync
-vale test --coverage styles/Plain styles/Changelog styles/Comments styles/Commit styles/PullRequest styles/Licence
-vale README.md CHANGELOG.md DEPENDENCIES.md
+make check
 ```
 
-A release is a tag `vX.Y.Z` on `main` with a matching entry in `CHANGELOG.md`. Pushing the tag builds `vale-style.zip` and publishes it as a GitHub release.
+`CONTRIBUTING.md` covers the checks, what a change to a rule needs and how a release is made.
 
 ## Licence
 

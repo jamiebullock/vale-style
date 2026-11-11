@@ -1,0 +1,64 @@
+language: en-GB
+
+reviews:
+  profile: chill
+  high_level_summary: true
+  poem: false
+  request_changes_workflow: true
+  review_status: false
+  path_filters:
+    - '!styles/config/dictionaries/**'
+  path_instructions:
+    - path: 'styles/**/*.yml'
+      instructions: |
+        A Vale rule, or the test file of a style. Check a rule's pattern
+        against its message: text the message describes that the pattern
+        misses, and correct text that the pattern reports. The patterns may
+        use lookahead and lookbehind.
+
+        A rule that is added or changed comes with test cases in the
+        style's test file, for text it reports and text it accepts.
+
+        A change to a rule changes the checks of every project that uses
+        the package. Flag one that the README does not describe.
+    - path: 'styles/config/scripts/*.tengo'
+      instructions: |
+        Tengo scripts that Vale runs for the script rules. The text is in
+        scope, and the script leaves its alerts in matches, each with a
+        begin and an end offset into scope and a message. Check the offsets,
+        input that is empty, and lines that end with a carriage return.
+    - path: '.vale.ini'
+      instructions: |
+        A project receives this file with the package, so every setting in
+        it applies to the project's files. Flag a setting that serves this
+        repository only, and a change that the tables in the README do not
+        show.
+    - path: 'CHANGELOG.md'
+      instructions: |
+        The rules are in the Changelog section of CONTRIBUTING.md, and the
+        prose target of the Makefile enforces the format, so do not comment
+        on the format.
+
+        Check each entry against the rules and the pull request it cites.
+        When an entry is inaccurate, ask for it to be corrected or narrowed
+        within one line. Do not ask for exceptions, qualifications or
+        explanations to be added to an entry.
+
+        Flag an entry that gives a reason, a mechanism or history, and one
+        that records a change no project that uses the package can observe
+        (CI, tests, tooling, refactoring).
+  pre_merge_checks:
+    docstrings:
+      mode: off
+  auto_review:
+    enabled: true
+    drafts: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - 'CONTRIBUTING.md'
+
+chat:
+  auto_reply: true
