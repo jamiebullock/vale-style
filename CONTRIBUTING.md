@@ -40,7 +40,7 @@ CI also checks the title and the description of a pull request: the title as the
 - Branch from `develop` and name the branch `<type>/<short-description>`, where type is `feat`, `fix`, `chore` or `refactor`.
 - Prefix the pull request title the same way: `fix: ...`, `feat: ...`.
 - If the pull request resolves an issue, put `Closes #N` in the description so the issue closes on merge.
-- Fill in the template. The Summary states what the change does and why in plain prose, and Changes is one bullet per change.
+- Fill in the template. The Summary opens with "This PR" and a verb in lower case, and states what the change does and why in plain prose. Changes is one bullet per change.
 - Keep a pull request to one change. A fix and an unrelated refactor are two pull requests.
 - The maintainer merges. Do not merge your own pull request.
 

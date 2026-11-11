@@ -31,7 +31,12 @@ version:
 	    echo "The newest release in CHANGELOG.md is '$$newest' and VERSION holds $$version."; \
 	    exit 1; \
 	fi; \
-	if grep -o 'releases/download/v[^/]*/vale-style\.zip' README.md | grep -Fqv "releases/download/v$$version/vale-style.zip"; then \
+	links="$$(grep -o 'releases/download/v[^/]*/vale-style\.zip' README.md)"; \
+	if [ -z "$$links" ]; then \
+	    echo "README.md names no release of the package."; \
+	    exit 1; \
+	fi; \
+	if printf '%s\n' "$$links" | grep -Fqv "releases/download/v$$version/vale-style.zip"; then \
 	    echo "README.md names a release that is not $$version."; \
 	    exit 1; \
 	fi; \
