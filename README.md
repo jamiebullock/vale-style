@@ -9,7 +9,7 @@ Name the package in the project's `.vale.ini`:
 ```ini
 StylesPath = .vale/styles
 MinAlertLevel = suggestion
-Packages = https://github.com/jamiebullock/vale-style/releases/download/v0.1.0/vale-style.zip
+Packages = https://github.com/jamiebullock/vale-style/releases/download/v0.2.0/vale-style.zip
 ```
 
 `vale sync` downloads the package, and `vale .` checks the tree. The package carries its own configuration, so those three lines are a complete `.vale.ini`.
@@ -127,7 +127,7 @@ Settings in the project's `.vale.ini` apply after the package's.
 ```ini
 StylesPath = .vale/styles
 MinAlertLevel = suggestion
-Packages = https://github.com/jamiebullock/vale-style/releases/download/v0.1.0/vale-style.zip
+Packages = https://github.com/jamiebullock/vale-style/releases/download/v0.2.0/vale-style.zip
 Vocab = Example
 
 [*.{c,h}]
