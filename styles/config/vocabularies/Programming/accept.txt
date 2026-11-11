@@ -3,6 +3,8 @@ argv
 ASan
 [Bb]ackends?
 bool
+cbrt
+ci
 [Cc]lang
 CMake
 CodeRabbit
@@ -13,6 +15,7 @@ deque
 Doxygen
 enum
 fallthrough
+fmin
 [Ff]uzzers?
 GitHub
 Homebrew
@@ -22,12 +25,16 @@ lcov
 libFuzzer
 macOS
 namespace
+perf
 PRs
 reflow
+[Ss]anitizers?
 soname
+stddev
 stderr
 stdin
 stdout
+strncpy
 struct
 [Tt]eardown
 typedef
