@@ -8,7 +8,7 @@
 
 ### Added
 
-- Add a `<!-- verbs: Pin, Vendor -->` comment that names a project's own changelog verbs ([#3](https://github.com/jamiebullock/vale-style/pull/3))
+- Make `Changelog.Verb` accept the verbs a project names in a `<!-- verbs: Pin, Vendor -->` comment ([#3](https://github.com/jamiebullock/vale-style/pull/3))
 - Add `cbrt`, `ci`, `fmin`, `perf`, `sanitizer`, `stddev` and `strncpy` to the Programming vocabulary ([#2](https://github.com/jamiebullock/vale-style/pull/2))
 
 ## [0.1.0] - 2026-11-11
