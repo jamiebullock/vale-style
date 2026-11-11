@@ -4,6 +4,7 @@ ASan
 [Bb]ackends?
 bool
 cbrt
+ci
 [Cc]lang
 CMake
 CodeRabbit
@@ -24,6 +25,7 @@ lcov
 libFuzzer
 macOS
 namespace
+perf
 PRs
 reflow
 [Ss]anitizers?
