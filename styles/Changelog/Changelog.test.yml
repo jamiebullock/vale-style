@@ -26,30 +26,32 @@
   want: ""
 
 - name: a well-formed file with CRLF line endings passes every rule
-  input: |
-    # Changelog
-    
-    ## [1.1.0] - 2026-02-01
-    
-    ### Changed
-    
-    - **Breaking:** rename `ex_mean` to `ex_average` ([#14](https://example.com/o/n/pull/14))
-    - Raise the minimum CMake version to 3.21 ([#13](https://example.com/o/n/pull/13), [#15](https://example.com/o/n/issues/15))
-    
-    ### Added
-    
-    - Add `ex_median` ([`53bd922`](https://example.com/o/n/commit/53bd922))
-    
-    ### Fixed
-    
-    - Fix the phase sign of `ex_spectrum` on Linux ([#12](https://example.com/o/n/pull/12))
-    
-    ## [1.0.0] - 2026-01-01
-    
-    _First release._
-    
-    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0
-    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  input: "# Changelog\r\n\
+    \r\n\
+    <!-- verbs: Pin, Vendor -->\r\n\
+    \r\n\
+    ## [1.1.0] - 2026-02-01\r\n\
+    \r\n\
+    ### Changed\r\n\
+    \r\n\
+    - **Breaking:** rename `ex_mean` to `ex_average` ([#14](https://example.com/o/n/pull/14))\r\n\
+    - Raise the minimum CMake version to 3.21 ([#13](https://example.com/o/n/pull/13), [#15](https://example.com/o/n/issues/15))\r\n\
+    \r\n\
+    ### Added\r\n\
+    \r\n\
+    - Vendor `ex_fft.c` ([#16](https://example.com/o/n/pull/16))\r\n\
+    - Add `ex_median` ([`53bd922`](https://example.com/o/n/commit/53bd922))\r\n\
+    \r\n\
+    ### Fixed\r\n\
+    \r\n\
+    - Fix the phase sign of `ex_spectrum` on Linux ([#12](https://example.com/o/n/pull/12))\r\n\
+    \r\n\
+    ## [1.0.0] - 2026-01-01\r\n\
+    \r\n\
+    _First release._\r\n\
+    \r\n\
+    [1.1.0]: https://example.com/o/n/compare/v1.0.0...v1.1.0\r\n\
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0\r\n"
   want: ""
 
 - name: another title and text before the first release
@@ -82,7 +84,7 @@
     [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
   want: |
     1:1:Changelog.Structure:The file opens with '# Changelog'.
-    3:1:Changelog.Structure:Nothing comes between the title and the first release.
+    3:1:Changelog.Structure:Only a verbs comment comes between the title and the first release.
 
 - name: a file with no release
   rule: Structure.yml
@@ -366,6 +368,77 @@
 
     [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
   contains: "7:17:Changelog.Verb:An entry opens with one of Accept, Add, "
+
+- name: a verbs comment adds the project's verbs to the list
+  input: |
+    # Changelog
+
+    <!-- verbs: Pin, Vendor -->
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Changed
+
+    - **Breaking:** pin CMake to 3.21 ([#2](https://example.com/o/n/pull/2))
+    - Vendor `ex_fft.c` ([#1](https://example.com/o/n/pull/1))
+    - Add `ex_median` ([#3](https://example.com/o/n/pull/3))
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: ""
+
+- name: an unlisted verb names the project's verbs in its message
+  rule: Verb.yml
+  input: |
+    # Changelog
+
+    <!-- verbs: Pin, Add -->
+
+    ## [1.0.0] - 2026-01-01
+
+    ### Added
+
+    - Introduce `ex_median`
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  contains: "Treat, Use, Pin."
+
+- name: a verbs comment below a release heading adds nothing
+  rule: Verb.yml
+  input: |
+    # Changelog
+
+    ## [1.0.0] - 2026-01-01
+
+    <!-- verbs: Pin -->
+
+    ### Changed
+
+    - Pin CMake to 3.21
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  contains: "9:3:Changelog.Verb:An entry opens with one of Accept, Add, "
+
+- name: verbs comments that are malformed, repeated or misplaced
+  rule: Structure.yml
+  input: |
+    # Changelog
+
+    <!-- verbs: pin -->
+    <!-- verbs: Pin -->
+
+    ## [1.0.0] - 2026-01-01
+
+    <!-- verbs: Vendor -->
+
+    ### Added
+
+    - Add `ex_median`
+
+    [1.0.0]: https://example.com/o/n/releases/tag/v1.0.0
+  want: |
+    3:1:Changelog.Structure:The verbs comment has the form '<!-- verbs: Pin, Vendor -->'.
+    4:1:Changelog.Structure:The file has one verbs comment at most.
+    8:1:Changelog.Structure:A release holds a notice in italics, section headings and one-line entries starting '- ', and nothing else.
 
 - name: entries without a linked reference at the end
   rule: Reference.yml

@@ -56,6 +56,7 @@ plain_entry_seen := false
 first_link := undefined
 links_closed := false
 first_line := undefined
+verbs_line := undefined
 offset := 0
 
 close_section := func() {
@@ -130,8 +131,15 @@ for index, content in text.split(scope, "\n") {
         }
     } else if content == "" {
         continue
+    } else if release == undefined && text.has_prefix(content, "<!-- verbs:") {
+        if verbs_line != undefined {
+            fail(line, "The file has one verbs comment at most.")
+        } else if !text.re_match("^<!-- verbs: [A-Z][a-z]+(, [A-Z][a-z]+)* -->$", content) {
+            fail(line, "The verbs comment has the form '<!-- verbs: Pin, Vendor -->'.")
+        }
+        verbs_line = line
     } else if release == undefined {
-        fail(line, "Nothing comes between the title and the first release.")
+        fail(line, "Only a verbs comment comes between the title and the first release.")
     } else if text.has_prefix(content, "- ") {
         if section_line == undefined {
             fail(line, "An entry comes under a section heading.")

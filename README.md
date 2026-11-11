@@ -63,12 +63,12 @@ In C and C++ files and in `*.tengo` scripts the Plain and Comments rules read th
 
 The Changelog style checks a `CHANGELOG.md` against [Common Changelog](https://common-changelog.org):
 
-- The file opens with `# Changelog`, and the first release heading follows it
+- The file opens with `# Changelog`, and the first release heading follows it. Only a verbs comment may come between them
 - A release heading is `## [X.Y.Z] - YYYY-MM-DD`. Releases run from newest to oldest, and each has a link at the foot of the file
 - A release may have one notice, a single line in italics directly under its heading
 - The sections are Changed, Added, Removed and Fixed, in that order
 - An entry is one line of 20 words at most, with no closing full stop
-- An entry opens with a verb in the imperative, taken from the list below
+- An entry opens with a verb in the imperative, taken from the list below or from the project's verbs comment
 - An entry ends with a linked pull request, issue or commit in parentheses
 - A breaking change opens with `**Breaking:**` and a lower-case verb, and comes first in its section
 
@@ -95,6 +95,16 @@ _First release._
 ```
 
 The verbs are Accept, Add, Allow, Assert, Build, Bump, Change, Check, Correct, Deprecate, Document, Drop, Exclude, Fix, Implement, Include, Keep, Limit, Make, Match, Move, Raise, Read, Reduce, Reject, Remove, Rename, Replace, Report, Require, Restrict, Return, Set, Speed, Stop, Support, Tag, Take, Treat and Use.
+
+A project adds verbs of its own in a comment on one line between the title and the first release, each a single word with a capital letter:
+
+```markdown
+# Changelog
+
+<!-- verbs: Pin, Vendor -->
+
+## [1.1.0] - 2026-02-01
+```
 
 ## Licence header
 
